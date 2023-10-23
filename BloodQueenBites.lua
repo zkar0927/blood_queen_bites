@@ -200,9 +200,9 @@ function ADDON.PLAYER_LOGIN()
     BloodQueenBitesDB.ranged_prio = BloodQueenBitesDB.ranged_prio or {}
     BloodQueenBitesDB.tank_prio = BloodQueenBitesDB.tank_prio or {}
     BloodQueenBitesDB.healer_prio = BloodQueenBitesDB.healer_prio or {}
-
     SetupSlashHandler()
 
+    C_ChatInfo.RegisterAddonMessagePrefix("BLOODQUEENBITES")
     ADDON.lastUpdateMarkTime = GetTime()
   end
 end
@@ -226,13 +226,15 @@ end
 -------------------------------------------------------------------------------
 -- Target marking logic
 -------------------------------------------------------------------------------
-local function GetPlayersToMark()
+local function GetPlayersToMark(bite_assignments)
 
-  local playersToMark = {}
+  local players_to_mark = {}
 
-  -- TODO
+  for biter, target in pairs(bite_assignments) do
+    players_to_mark[target] = 0
+  end
 
-  return playersToMark
+  return players_to_mark
 end
 
 local function GetMarkedPlayers()
@@ -249,14 +251,14 @@ local function GetMarkedPlayers()
   return marks
 end
 
-local function UpdateMarks()
-  local markedPlayers = GetMarkedPlayers()
+local function UpdateMarks(bite_assignments)
 
-  local playersToMark = GetPlayersToMark()
+  local playersToMark = GetPlayersToMark(bite_assignments)
 
   local availableMarks = {}
 
   -- Go through all marked players and find any which should no longer be marked
+  local markedPlayers = GetMarkedPlayers()
   for markIndex, playerName in pairs(markedPlayers) do
     if playersToMark[playerName] ~= nil then
       -- This is a person who has a mark, and should keep it
@@ -273,6 +275,7 @@ local function UpdateMarks()
     if markIndex == 0 then
       local data = tremove(availableMarks)
 
+      playersToMark[playerName] = data[1]
       SetRaidTarget(playerName, data[1])
     end
   end
@@ -284,6 +287,7 @@ local function UpdateMarks()
     end
   end
 
+  return playersToMark
 end
 
 -------------------------------------------------------------------------------
@@ -394,7 +398,8 @@ end
 -- Val: Bite target player name
 local bite_assignments = {}
 
-local function AssignBiteTargets()
+local function GetBiteAssignments()
+  local new_assignments = {}
   local bitten_players = GetBittenPlayers()
   bite_assignments = UpdateExistingBiteAssignments(bite_assignments, bitten_players)
 
@@ -406,14 +411,40 @@ local function AssignBiteTargets()
     else
       -- not assigned anyone yet
       local next_target = GetNextBiteTarget(unit_name, bite_assignments, bitten_players)
-      if next_target == nil then 
+      if next_target == nil then
         print("Out of targets to bite")
       else
         bite_assignments[unit_name] = next_target
+        new_assignments[unit_name] = next_target
         print("New Assignment: " .. unit_name .. " -> " .. next_target)
       end
     end
   end
+
+  return bite_assignments, new_assignments
+end
+
+local function SendNewAssignmentMessages(new_assignments, players_marked)
+  for biter, target in pairs(new_assignments) do
+    local target_index = players_marked[target]
+    SendChatMessage(">>> Next bite target: {rt" .. target_index .. "} " .. target .. " {rt" .. target_index .. "}",
+      "WHISPER", nil, biter)
+  end
+end
+
+local function SendAddonMessages(bite_assignments, players_marked)
+
+  local message = ""
+  for biter, target in pairs(bite_assignments) do
+    if message == "" then
+      message = biter .. "," .. target .. "," .. players_marked[target]
+    else
+      message = message .. "^" .. biter .. "," .. target .. "," .. players_marked[target]
+    end
+  end
+
+  if message == "" then message = "^^^" end
+  C_ChatInfo.SendAddonMessage("BLOODQUEENBITES", message, "RAID")
 end
 
 function ADDON.UNIT_AURA(self, event, unitTarget)
@@ -427,7 +458,9 @@ function ADDON.UNIT_AURA(self, event, unitTarget)
     end
     ADDON.lastUpdateMarkTime = now
 
-    AssignBiteTargets()
-    UpdateMarks()
+    local bite_assignments, new_assignments = GetBiteAssignments()
+    local players_marked = UpdateMarks(bite_assignments)
+    SendNewAssignmentMessages(new_assignments, players_marked)
+    SendAddonMessages(bite_assignments, players_marked)
   end
 end
