@@ -24,13 +24,14 @@ local function GetMaxRaidMembers()
   return max
 end
 
+-------------------------------------------------------------------------------
+-- User Interface
+-------------------------------------------------------------------------------
 local function GetAllRaidMembersByRole()
 
   local melee, ranged, tanks, healers = "", "", "", ""
 
-  local max = GetMaxRaidMembers()
-
-  for i = 1, max do
+  for i = 1, GetMaxRaidMembers() do
 
     local name, _, _, _, class, _, _, _, _, _, _, role = GetRaidRosterInfo(i)
 
@@ -51,9 +52,6 @@ local function GetAllRaidMembersByRole()
   return melee, ranged, tanks, healers
 end
 
--------------------------------------------------------------------------------
--- User Interface
--------------------------------------------------------------------------------
 local function ClickSave()
   BloodQueenBitesDB.melee_prio = strsplittable("\n", ADDON.config_frame.melee_box:GetText())
   BloodQueenBitesDB.ranged_prio = strsplittable("\n", ADDON.config_frame.ranged_box:GetText())
@@ -268,6 +266,17 @@ local function UpdateMarks()
 
 end
 
+-------------------------------------------------------------------------------
+-- Bite assignment logic
+-------------------------------------------------------------------------------
+local function AssignBiteTargets()
+  local debuff_name = "Essence of the Blood Queen"
+  local need_to_bite_name = "Frenzied Bloodthirst"
+  -- TODO: create assignments for each person who is bitten
+  -- Ex: PersonA -> {PersonX, "Circle Marker"}
+  -- Ex: PersonB -> {PersonY, "Square Marker"}
+end
+
 function ADDON.UNIT_AURA(self, event, unitTarget)
 
   -- Only look for auras applied to raid units
@@ -279,6 +288,7 @@ function ADDON.UNIT_AURA(self, event, unitTarget)
     end
     ADDON.lastUpdateMarkTime = now
 
+    AssignBiteTargets()
     UpdateMarks()
   end
 end
