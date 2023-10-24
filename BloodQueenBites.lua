@@ -2,6 +2,7 @@ local _, ADDON_NS = ...
 
 local GetInstanceInfo, GetNumGroupMembers = GetInstanceInfo, GetNumGroupMembers
 local ADDON = CreateFrame("Frame", "BloodQueenBites", UIParent)
+ADDON_NS.ADDON = ADDON
 
 ADDON:SetScript("OnEvent", function(self, event, ...)
   return self[event](self, event, ...)

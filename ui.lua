@@ -4,7 +4,6 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 -- Making these local for performance
 local GetMaxRaidMembers = ADDON_NS.GetMaxRaidMembers
-local BloodQueenBitesDB = BloodQueenBitesDB
 local strsplittable = strsplittable
 
 local function GetAllRaidMembersByRole()
@@ -33,8 +32,8 @@ local function GetAllRaidMembersByRole()
 end
 
 local function ClickSave()
-  BloodQueenBitesDB.melee_prio = strsplittable("\n", ADDON.config_frame.melee_box:GetText())
-  BloodQueenBitesDB.ranged_prio = strsplittable("\n", ADDON.config_frame.ranged_box:GetText())
+  BloodQueenBitesDB.melee_prio = strsplittable("\n", ADDON_NS.ADDON.config_frame.melee_box:GetText())
+  BloodQueenBitesDB.ranged_prio = strsplittable("\n", ADDON_NS.ADDON.config_frame.ranged_box:GetText())
 
   local _, _, tanks, heals = GetAllRaidMembersByRole()
   BloodQueenBitesDB.tank_prio = strsplittable("\n", tanks)
@@ -76,9 +75,9 @@ local function TableToLineSeparatedString(t)
   return result
 end
 
-local function ADDON_NS.CreateUI()
+function ADDON_NS.CreateUI()
   local frame = AceGUI:Create("Frame")
-  ADDON.config_frame = frame
+  ADDON_NS.ADDON.config_frame = frame
 
   -- General frame setup
   frame:SetTitle("Blood Queen Bites")

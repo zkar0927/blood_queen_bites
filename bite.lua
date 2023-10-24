@@ -2,7 +2,7 @@ local _, ADDON_NS = ...
 
 -- Making these local for performance
 local GetMaxRaidMembers = ADDON_NS.GetMaxRaidMembers
-local BloodQueenBitesDB = BloodQueenBitesDB
+-- local BloodQueenBitesDB = BloodQueenBitesDB
 local UnitIsDeadOrGhost, UnitExists, UnitName, FindAuraByName = UnitIsDeadOrGhost, UnitExists, UnitName, AuraUtil.FindAuraByName
 
 local function GetBittenPlayers()
@@ -109,7 +109,7 @@ end
 -- Val: Bite target player name
 local bite_assignments = {}
 
-local function ADDON_NS.GetBiteAssignments()
+function ADDON_NS.GetBiteAssignments()
   local new_assignments = {}
   local bitten_players = GetBittenPlayers()
   bite_assignments = UpdateExistingBiteAssignments(bite_assignments, bitten_players)

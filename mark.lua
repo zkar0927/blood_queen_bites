@@ -33,7 +33,7 @@ end
 -- Accepts a table, and tries to mark the values in the table
 -- Keeps any existing marks when possible, and assigns new marks where needed
 -- Also clears anyone marked who is not in this table
-local function ADDON_NS.UpdateMarks(assignments)
+function ADDON_NS.UpdateMarks(assignments)
 
   local playersToMark = GetPlayersToMark(assignments)
 
