@@ -2,7 +2,6 @@ local _, ADDON_NS = ...
 
 -- Making these local for performance
 local GetMaxRaidMembers = ADDON_NS.GetMaxRaidMembers
--- local BloodQueenBitesDB = BloodQueenBitesDB
 local UnitIsDeadOrGhost, UnitExists, UnitName, FindAuraByName = UnitIsDeadOrGhost, UnitExists, UnitName, AuraUtil.FindAuraByName
 
 local function GetBittenPlayers()

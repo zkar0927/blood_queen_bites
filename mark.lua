@@ -16,7 +16,6 @@ local function GetPlayersToMark(assignments)
 end
 
 local function GetMarkedPlayers()
-  -- local marks = { [1] = "", [2] = "", [3] = "", [4] = "", [5] = "", [6] = "", [7] = "", [8] = "" }
   local marks = { "", "", "", "", "", "", "", "" }
 
   for i = 1, GetMaxRaidMembers() do
