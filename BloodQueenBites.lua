@@ -105,7 +105,7 @@ local function CreateUI()
 
   -- General frame setup
   frame:SetTitle("Blood Queen Bites")
-  frame:SetStatusText("TODO")
+  frame:SetStatusText("Remember to click Save!")
   frame:SetLayout("Flow")
   frame:SetCallback(
     "OnClose",
@@ -304,8 +304,8 @@ local function GetBittenPlayers()
       local debuff_name = "Essence of the Blood Queen"
       local need_to_bite_name = "Frenzied Bloodthirst"
 
-      local is_bitten = FindAuraByName(debuff_name, cur_unit)
-      local is_trying_to_bite = FindAuraByName(need_to_bite_name, cur_unit)
+      local is_bitten = FindAuraByName(debuff_name, cur_unit, "HARMFUL")
+      local is_trying_to_bite = FindAuraByName(need_to_bite_name, cur_unit, "HARMFUL")
 
       if is_bitten ~= nil or is_trying_to_bite ~= nil then
         bitten_units[UnitName(cur_unit)] = true
